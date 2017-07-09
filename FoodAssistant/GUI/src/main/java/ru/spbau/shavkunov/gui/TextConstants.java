@@ -4,7 +4,12 @@ package ru.spbau.shavkunov.gui;
  * Class, that holding all the text labels. Might be helpful with localizing product. TODO : russian + english.
  */
 public class TextConstants {
-    public static final String getRecipeLabel = "Get random recipe";
-    public static final String addRecipeLabel = "Add recipe";
-    public static final String exitLabel = "Exit";
+    public static final String GET_RECIPE_LABEL = "Get random recipe";
+    public static final String ADD_RECIPE_LABEL = "Add recipe";
+    public static final String EXIT_LABEL = "Exit";
+    public static final String ENTER_NAME_LABEL = "Enter recipe\nname:";
+    public static final String ENTER_DESCRIPTION_LABEL = "Enter recipe\ndescription:";
+    public static final String ENTER_RECIPE_INGREDIENTS_LABEL = "Enter recipe\ningredients:";
+    public static final String ADD_NEW_INGREDIENT_BUTTON = "Add new \ningredient";
+    public static final String BACK_BUTTON = "Back";
 }

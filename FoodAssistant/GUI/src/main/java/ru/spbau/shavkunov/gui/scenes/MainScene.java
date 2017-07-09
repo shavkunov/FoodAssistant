@@ -1,6 +1,5 @@
-package ru.spbau.shavkunov.gui;
+package ru.spbau.shavkunov.gui.scenes;
 
-import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -8,44 +7,24 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
+import ru.spbau.shavkunov.gui.UserInterface;
 
 import static ru.spbau.shavkunov.gui.TextConstants.*;
 
-/**
- * Main menu.
- */
-public class MainScene extends Application {
-    private static double STAGE_HEIGHT = 500;
-    private static double STAGE_WIDTH = 300;
-    private static double BUTTON_WIDTH = 150;
+public class MainScene extends SceneWrap {
+    private static final int STAGE_HEIGHT = 500;
+    private static final int STAGE_WIDTH = 300;
+    private static final int BUTTON_WIDTH = 150;
 
-    /**
-     * Controlls the core.
-     */
-    //private static final controller = new Controller();
-
-    @Override
-    public void start(@NotNull Stage stage) throws Exception {
-        // init scene with group objects
-        stage.setTitle("Food Assistant");
-        stage.setResizable(false);
-
-        Scene startScene = initMainScene(stage);
-
-        stage.setScene(startScene);
-        stage.show();
+    public MainScene(@NotNull Stage stage) {
+        this.stage = stage;
+        initMainScene();
     }
 
     /**
      * Initializing of all objects on the scene.
-     * @param stage stage.
      */
-    private @NotNull Scene initMainScene(@NotNull Stage stage) {
-        stage.setHeight(STAGE_HEIGHT);
-        stage.setWidth(STAGE_WIDTH);
-
+    private void initMainScene() {
         VBox vbox = new VBox();
 
         vbox.setAlignment(Pos.CENTER);
@@ -54,9 +33,7 @@ public class MainScene extends Application {
         // TODO : list purchases
         initExitButton(vbox, stage);
 
-        Scene startingScene = new Scene(vbox);
-
-        return startingScene;
+        this.scene = new Scene(vbox);
     }
 
     /**
@@ -64,7 +41,7 @@ public class MainScene extends Application {
      * @param pane pane, where button will be added.
      */
     private void initGetRecipeButton(@NotNull Pane pane) {
-        Button getRecipeButton = new Button(getRecipeLabel);
+        Button getRecipeButton = new Button(GET_RECIPE_LABEL);
         getRecipeButton.setMaxWidth(BUTTON_WIDTH);
 
         getRecipeButton.setOnAction(actionEvent ->  {
@@ -79,11 +56,11 @@ public class MainScene extends Application {
      * @param pane pane, where button will be added.
      */
     private void initAddRecipeButton(@NotNull Pane pane) {
-        Button addRecipeButton = new Button(addRecipeLabel);
+        Button addRecipeButton = new Button(ADD_RECIPE_LABEL);
         addRecipeButton.setMaxWidth(BUTTON_WIDTH);
 
         addRecipeButton.setOnAction(actionEvent ->  {
-            // TODO
+            UserInterface.showScene(new AddRecipeScene(stage));
         });
 
         pane.getChildren().add(addRecipeButton);
@@ -95,20 +72,21 @@ public class MainScene extends Application {
      * @param stage main stage.
      */
     private void initExitButton(@NotNull Pane pane, @NotNull Stage stage) {
-        Button exitButton = new Button(exitLabel);
+        Button exitButton = new Button(EXIT_LABEL);
         exitButton.setMaxWidth(BUTTON_WIDTH);
 
-        exitButton.setOnAction(actionEvent ->  {
-            stage.close();
-        });
+        exitButton.setOnAction(actionEvent -> stage.close());
 
         pane.getChildren().add(exitButton);
     }
 
-    /**
-     * Launching UI.
-     */
-    public static void main(@NotNull String[] args) throws IOException {
-        Application.launch(args);
+    @Override
+    public int getStageHeight() {
+        return STAGE_HEIGHT;
+    }
+
+    @Override
+    public int getStageWidth() {
+        return STAGE_WIDTH;
     }
 }
