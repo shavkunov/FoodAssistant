@@ -12,11 +12,6 @@ import java.io.IOException;
  * Main menu.
  */
 public class UserInterface extends Application {
-    /**
-     * Controlls the core.
-     */
-    //private static final controller = new Controller();
-
     @Override
     public void start(@NotNull Stage stage) throws Exception {
         // init scene with group objects

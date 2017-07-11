@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import ru.spbau.shavkunov.gui.UserInterface;
 
-import static ru.spbau.shavkunov.gui.TextConstants.*;
+import static ru.spbau.shavkunov.gui.InterfaceTextConstants.*;
 
 public class MainScene extends SceneWrap {
     private static final int STAGE_HEIGHT = 500;
@@ -59,9 +59,8 @@ public class MainScene extends SceneWrap {
         Button addRecipeButton = new Button(ADD_RECIPE_LABEL);
         addRecipeButton.setMaxWidth(BUTTON_WIDTH);
 
-        addRecipeButton.setOnAction(actionEvent ->  {
-            UserInterface.showScene(new AddRecipeScene(stage));
-        });
+        addRecipeButton.setOnAction(actionEvent ->
+                UserInterface.showScene(new AddRecipeScene(stage)));
 
         pane.getChildren().add(addRecipeButton);
     }

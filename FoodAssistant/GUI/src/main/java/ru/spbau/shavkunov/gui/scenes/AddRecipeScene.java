@@ -4,6 +4,7 @@ package ru.spbau.shavkunov.gui.scenes;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -12,9 +13,18 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.spbau.shavkunov.gui.UserInterface;
+import ru.spbau.shavkunov.server.DatabaseHelper;
+import ru.spbau.shavkunov.server.data.AmountType;
+import ru.spbau.shavkunov.server.data.Ingredient;
+import ru.spbau.shavkunov.server.data.Recipe;
+import ru.spbau.shavkunov.textchecker.TextChecker;
 
-import static ru.spbau.shavkunov.gui.TextConstants.*;
+import java.util.LinkedList;
+import java.util.List;
+
+import static ru.spbau.shavkunov.gui.InterfaceTextConstants.*;
 
 public class AddRecipeScene extends SceneWrap {
     private static final int STAGE_HEIGHT = 700;
@@ -30,6 +40,11 @@ public class AddRecipeScene extends SceneWrap {
 
     private static final int GENERAL_WIDTH = 350;
     private @NotNull GridPane gridPane;
+
+    private @Nullable TextField nameField;
+    private @Nullable ListView<Pane> ingredientList;
+    private @Nullable TextArea descriptionField;
+    private @Nullable Label infoLabel;
 
     public AddRecipeScene(@NotNull Stage stage) {
         this.stage = stage;
@@ -51,11 +66,11 @@ public class AddRecipeScene extends SceneWrap {
 
     private void initNameRecipeField() {
         Label enterName = new Label(ENTER_NAME_LABEL);
-        TextField textField = new TextField();
-        textField.setMinWidth(GENERAL_WIDTH);
+        nameField = new TextField();
+        nameField.setMinWidth(GENERAL_WIDTH);
 
         HBox hb = new HBox();
-        hb.getChildren().addAll(enterName, textField);
+        hb.getChildren().addAll(enterName, nameField);
         hb.setSpacing(SPACE);
 
         gridPane.addRow(1, hb);
@@ -64,19 +79,19 @@ public class AddRecipeScene extends SceneWrap {
     private void initIngredientsField() {
         Label enterRecipeIngredients = new Label(ENTER_RECIPE_INGREDIENTS_LABEL);
 
-        ListView<Pane> list = new ListView<>();
-        list.setMinWidth(GENERAL_WIDTH);
-        list.setMaxHeight(LIST_VIEW_HEIGHT);
+        ingredientList = new ListView<>();
+        ingredientList.setMinWidth(GENERAL_WIDTH);
+        ingredientList.setMaxHeight(LIST_VIEW_HEIGHT);
 
         Button addNewLine = new Button(ADD_NEW_INGREDIENT_BUTTON);
         addNewLine.setOnAction(actionEvent ->  {
-            ObservableList<Pane> items = list.getItems();
+            ObservableList<Pane> items = ingredientList.getItems();
             items.add(getNewCell());
-            list.setItems(items);
+            ingredientList.setItems(items);
         });
 
         HBox hb = new HBox();
-        hb.getChildren().addAll(enterRecipeIngredients, list, addNewLine);
+        hb.getChildren().addAll(enterRecipeIngredients, ingredientList, addNewLine);
         hb.setSpacing(SPACE);
 
         gridPane.addRow(2, hb);
@@ -87,7 +102,7 @@ public class AddRecipeScene extends SceneWrap {
         TextField ingredientAmount = new TextField();
         ingredientAmount.setMaxSize(AMOUNT_MAX_WIDTH, AMOUNT_MAX_HEIGHT);
         ChoiceBox kindOfAmount = new ChoiceBox();
-        kindOfAmount.setItems(FXCollections.observableArrayList("g", "piece(-s)", "kg", "ml", "tbsp"));
+        kindOfAmount.setItems(FXCollections.observableArrayList(AmountType.values()));
 
         HBox hb = new HBox();
         hb.getChildren().addAll(ingredientName, ingredientAmount, kindOfAmount);
@@ -98,24 +113,74 @@ public class AddRecipeScene extends SceneWrap {
 
     private void initDescriptionField() {
         Label enterName = new Label(ENTER_DESCRIPTION_LABEL);
-        TextArea textArea = new TextArea();
+        descriptionField = new TextArea();
 
-        textArea.setMinHeight(DESCRIPTION_MIN_SIZE);
-        textArea.setMaxWidth(GENERAL_WIDTH);
+        descriptionField.setMinHeight(DESCRIPTION_MIN_SIZE);
+        descriptionField.setMaxWidth(GENERAL_WIDTH);
         HBox hb = new HBox();
-        hb.getChildren().addAll(enterName, textArea);
+        hb.getChildren().addAll(enterName, descriptionField);
         hb.setSpacing(SPACE);
 
-        gridPane.addRow(3, hb);
+        VBox vBox = new VBox();
+
+        infoLabel = new Label();
+        infoLabel.setAlignment(Pos.CENTER);
+        vBox.getChildren().addAll(hb, initSubmitButton(), infoLabel);
+        vBox.setAlignment(Pos.CENTER);
+
+        gridPane.addRow(3, vBox);
     }
 
     private @NotNull Button initBackButton() {
         Button backButton = new Button(BACK_BUTTON);
-        backButton.setOnAction(actionEvent ->  {
-            UserInterface.showScene(new MainScene(this.stage));
-        });
+        backButton.setOnAction(actionEvent ->
+                UserInterface.showScene(new MainScene(this.stage)));
 
         return backButton;
+    }
+
+    private @NotNull Button initSubmitButton() {
+        Button submitButton = new Button(SUBMIT_BUTTON);
+        submitButton.setOnAction(actionEvent ->  {
+            Recipe rawData = collectRecipe();
+            Object result = TextChecker.INSTANCE.checkRawData(rawData);
+
+            if (result instanceof String) {
+                infoLabel.setText((String) result);
+            } else {
+                DatabaseHelper helper = DatabaseHelper.INSTANCE;
+                helper.addRecipe((Recipe) result);
+
+                infoLabel.setText(SUCCESSFUL_ADDED);
+                // TODO : maybe fading text?
+            }
+        });
+
+        submitButton.setAlignment(Pos.CENTER);
+        return submitButton;
+    }
+
+    private @Nullable Recipe collectRecipe() {
+        String name = nameField.getText();
+        String description = descriptionField.getText();
+
+        List<Ingredient> ingredients = new LinkedList<>();
+        for (Pane ingredientPane : ingredientList.getItems()) {
+            List<Node> children = ingredientPane.getChildren();
+
+            // bad code...
+            String ingredientName = ((TextField) children.get(0)).getText();
+            int amount = Integer.parseInt(((TextField) children.get(1)).getText());
+            String amountType = (String) ((ChoiceBox) children.get(2)).getSelectionModel().getSelectedItem();
+            AmountType castedAmount = AmountType.Companion.getEnum(amountType);
+
+            Ingredient ingredient = new Ingredient(ingredientName, amount, castedAmount);
+            ingredients.add(ingredient);
+        }
+
+        Recipe newRecipe = new Recipe(name, ingredients, description);
+
+        return newRecipe;
     }
 
     @Override

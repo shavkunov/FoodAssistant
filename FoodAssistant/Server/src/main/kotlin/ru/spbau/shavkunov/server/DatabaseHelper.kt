@@ -6,7 +6,7 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
 
-class DatabaseHelper {
+object DatabaseHelper {
     private val dbName = "~/food_assistant_database.db"
     private var connection: Connection
 
