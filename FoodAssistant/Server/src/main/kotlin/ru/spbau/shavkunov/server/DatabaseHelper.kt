@@ -2,18 +2,11 @@ package ru.spbau.shavkunov.server
 
 import ru.spbau.shavkunov.server.data.Recipe
 import java.io.File
-import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
 
 object DatabaseHelper {
-    private val dbName = "~/food_assistant_database.db"
-    private var connection: Connection
-
-    init {
-        connection = DriverManager.getConnection("jdbc:sqlite:" + dbName)
-        connection.createStatement().execute("PRAGMA foreign_keys = ON")
-    }
+    private val dbName = "food_assistant_database.db"
 
     private fun createRecipeTable(stmt: Statement) {
         val createRecipeTable = "CREATE TABLE Recipe (" +
@@ -36,6 +29,9 @@ object DatabaseHelper {
     }
 
     fun createDatabase() {
+        val connection = DriverManager.getConnection("jdbc:sqlite:" + dbName)
+        connection.createStatement().execute("PRAGMA foreign_keys = ON")
+
         connection.autoCommit = false
         val stmt = connection.createStatement()
         createRecipeTable(stmt)
@@ -54,24 +50,26 @@ object DatabaseHelper {
     private fun insertRecipeName(recipe: Recipe, stmt: Statement): Int {
         val recipeName = recipe.name
         val recipeDesc = recipe.description
-        val insertRecipeName = "INSERT INTO Recipe VALUES ($recipeName, $recipeDesc)"
+        val insertRecipeName = "INSERT INTO Recipe(name, description) VALUES ('$recipeName', '$recipeDesc')"
 
         return stmt.executeUpdate(insertRecipeName)
     }
 
     private fun insertRecipeIngredients(recipeID: Int, recipe: Recipe, stmt: Statement) {
-        for (ingredient in recipe.ingredients) {
+        for (ingredient in recipe.ingredients!!) {
             val name = ingredient.name
             val amount = ingredient.amount
             val amountType = ingredient.kindOfAmount.toString()
-            val insertIngredient = "INSERT INTO Ingredient VALUES " +
-                                   "($name, $amount, $amountType, $recipeID)"
+            val insertIngredient = "INSERT INTO Ingredient(name, amount, amount_type, recipe_ID) " +
+                                   "VALUES ('$name', $amount, '$amountType', $recipeID)"
 
             stmt.executeUpdate(insertIngredient)
         }
     }
 
     fun addRecipe(recipe: Recipe) {
+        val connection = DriverManager.getConnection("jdbc:sqlite:" + dbName)
+        connection.autoCommit = false;
         val stmt = connection.createStatement()
 
         val recipeID = insertRecipeName(recipe, stmt)

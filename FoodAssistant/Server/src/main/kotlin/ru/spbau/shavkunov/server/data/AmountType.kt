@@ -4,7 +4,7 @@ enum class AmountType(private val value: String) {
     GR("gr"),
     KG("kg"),
     PIECE("piece(-s)"),
-    TBSP("tpsp"),
+    TBSP("tsp"),
     ML("ml");
 
     fun getValue(): String {

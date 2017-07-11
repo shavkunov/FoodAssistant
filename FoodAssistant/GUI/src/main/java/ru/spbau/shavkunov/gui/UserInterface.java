@@ -5,6 +5,7 @@ import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import ru.spbau.shavkunov.gui.scenes.MainScene;
 import ru.spbau.shavkunov.gui.scenes.SceneWrap;
+import ru.spbau.shavkunov.server.DatabaseHelper;
 
 import java.io.IOException;
 
@@ -19,8 +20,15 @@ public class UserInterface extends Application {
         stage.setResizable(false);
 
         MainScene mainScene = new MainScene(stage);
+        initDatabase();
 
         showScene(mainScene);
+    }
+
+    private void initDatabase() {
+        if (!DatabaseHelper.INSTANCE.isDatabaseexists()) {
+            DatabaseHelper.INSTANCE.createDatabase();
+        }
     }
 
     public static void showScene(@NotNull SceneWrap wrap) {

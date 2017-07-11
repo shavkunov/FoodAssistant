@@ -19,6 +19,7 @@ import ru.spbau.shavkunov.server.DatabaseHelper;
 import ru.spbau.shavkunov.server.data.AmountType;
 import ru.spbau.shavkunov.server.data.Ingredient;
 import ru.spbau.shavkunov.server.data.Recipe;
+import ru.spbau.shavkunov.textchecker.ErrorTextConstantsKt;
 import ru.spbau.shavkunov.textchecker.TextChecker;
 
 import java.util.LinkedList;
@@ -148,11 +149,14 @@ public class AddRecipeScene extends SceneWrap {
             if (result instanceof String) {
                 infoLabel.setText((String) result);
             } else {
-                DatabaseHelper helper = DatabaseHelper.INSTANCE;
-                helper.addRecipe((Recipe) result);
 
-                infoLabel.setText(SUCCESSFUL_ADDED);
-                // TODO : maybe fading text?
+                if (result != null) {
+                    DatabaseHelper helper = DatabaseHelper.INSTANCE;
+                    helper.addRecipe((Recipe) result);
+
+                    infoLabel.setText(SUCCESSFUL_ADDED);
+                    // TODO : maybe fading text?
+                }
             }
         });
 
@@ -170,11 +174,17 @@ public class AddRecipeScene extends SceneWrap {
 
             // bad code...
             String ingredientName = ((TextField) children.get(0)).getText();
-            int amount = Integer.parseInt(((TextField) children.get(1)).getText());
-            String amountType = (String) ((ChoiceBox) children.get(2)).getSelectionModel().getSelectedItem();
-            AmountType castedAmount = AmountType.Companion.getEnum(amountType);
+            Integer amount;
+            try {
+                amount = Integer.valueOf((((TextField) children.get(1)).getText()));
+            } catch (NumberFormatException e) {
+                infoLabel.setText(ErrorTextConstantsKt.INVALID_INGREDIENT_AMOUNT);
+                return null;
+            }
+            AmountType amountType = (AmountType) ((ChoiceBox) children.get(2)).getSelectionModel().getSelectedItem();
+            //AmountType castedAmount = AmountType.Companion.getEnum(amountType);
 
-            Ingredient ingredient = new Ingredient(ingredientName, amount, castedAmount);
+            Ingredient ingredient = new Ingredient(ingredientName, amount, amountType);
             ingredients.add(ingredient);
         }
 
