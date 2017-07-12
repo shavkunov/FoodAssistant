@@ -33,8 +33,8 @@ public class UserInterface extends Application {
 
     public static void showScene(@NotNull SceneWrap wrap) {
         Stage stage = wrap.getStage();
-        stage.setHeight(wrap.getStageHeight());
-        stage.setWidth(wrap.getStageWidth());
+        stage.setHeight(wrap.getSceneHeight());
+        stage.setWidth(wrap.getSceneWidth());
 
         stage.setScene(wrap.getScene());
         stage.show();

@@ -28,8 +28,8 @@ import java.util.List;
 import static ru.spbau.shavkunov.gui.InterfaceTextConstants.*;
 
 public class AddRecipeScene extends SceneWrap {
-    private static final int STAGE_HEIGHT = 700;
-    private static final int STAGE_WIDTH = 700;
+    private static final int SCENE_HEIGHT = 700;
+    private static final int SCENE_WIDTH = 700;
 
     private static final int SPACE = 5;
     private static final int AMOUNT_MAX_WIDTH = 50;
@@ -58,9 +58,8 @@ public class AddRecipeScene extends SceneWrap {
         initNameRecipeField();
         initIngredientsField();
         initDescriptionField();
-        Button backButton = initBackButton();
+        Button backButton = initBackButton(this.stage);
 
-        backButton.setAlignment(Pos.TOP_LEFT);
         VBox vBox = new VBox();
         vBox.getChildren().addAll(backButton, gridPane);
 
@@ -151,11 +150,12 @@ public class AddRecipeScene extends SceneWrap {
         gridPane.addRow(3, vBox);
     }
 
-    private @NotNull Button initBackButton() {
+    public static  @NotNull Button initBackButton(@NotNull Stage stage) {
         Button backButton = new Button(BACK_BUTTON);
         backButton.setOnAction(actionEvent ->
-                UserInterface.showScene(new MainScene(this.stage)));
+                UserInterface.showScene(new MainScene(stage)));
 
+        backButton.setAlignment(Pos.TOP_LEFT);
         return backButton;
     }
 
@@ -193,16 +193,14 @@ public class AddRecipeScene extends SceneWrap {
 
             // bad code...
             String ingredientName = ((TextField) children.get(0)).getText();
-            Integer amount;
+            Double amount;
             try {
-                amount = Integer.valueOf((((TextField) children.get(1)).getText()));
+                amount = Double.valueOf((((TextField) children.get(1)).getText()));
             } catch (NumberFormatException e) {
                 infoLabel.setText(ErrorTextConstantsKt.INVALID_INGREDIENT_AMOUNT);
                 return null;
             }
             AmountType amountType = (AmountType) ((ChoiceBox) children.get(2)).getSelectionModel().getSelectedItem();
-            //AmountType castedAmount = AmountType.Companion.getEnum(amountType);
-
             Ingredient ingredient = new Ingredient(ingredientName, amount, amountType);
             ingredients.add(ingredient);
         }
@@ -213,12 +211,12 @@ public class AddRecipeScene extends SceneWrap {
     }
 
     @Override
-    public int getStageHeight() {
-        return STAGE_HEIGHT;
+    public int getSceneHeight() {
+        return SCENE_HEIGHT;
     }
 
     @Override
-    public int getStageWidth() {
-        return STAGE_WIDTH;
+    public int getSceneWidth() {
+        return SCENE_WIDTH;
     }
 }

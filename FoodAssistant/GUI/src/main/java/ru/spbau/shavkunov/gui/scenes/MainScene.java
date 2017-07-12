@@ -12,8 +12,8 @@ import ru.spbau.shavkunov.gui.UserInterface;
 import static ru.spbau.shavkunov.gui.InterfaceTextConstants.*;
 
 public class MainScene extends SceneWrap {
-    private static final int STAGE_HEIGHT = 500;
-    private static final int STAGE_WIDTH = 300;
+    private static final int SCENE_HEIGHT = 500;
+    private static final int SCENE_WIDTH = 300;
     private static final int BUTTON_WIDTH = 150;
 
     public MainScene(@NotNull Stage stage) {
@@ -44,9 +44,8 @@ public class MainScene extends SceneWrap {
         Button getRecipeButton = new Button(GET_RECIPE_LABEL);
         getRecipeButton.setMaxWidth(BUTTON_WIDTH);
 
-        getRecipeButton.setOnAction(actionEvent ->  {
-            // TODO
-        });
+        getRecipeButton.setOnAction(actionEvent ->
+                UserInterface.showScene(new GetRecipeScene(stage)));
 
         pane.getChildren().add(getRecipeButton);
     }
@@ -80,12 +79,12 @@ public class MainScene extends SceneWrap {
     }
 
     @Override
-    public int getStageHeight() {
-        return STAGE_HEIGHT;
+    public int getSceneHeight() {
+        return SCENE_HEIGHT;
     }
 
     @Override
-    public int getStageWidth() {
-        return STAGE_WIDTH;
+    public int getSceneWidth() {
+        return SCENE_WIDTH;
     }
 }

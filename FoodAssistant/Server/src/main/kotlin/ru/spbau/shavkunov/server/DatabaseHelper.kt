@@ -1,9 +1,13 @@
 package ru.spbau.shavkunov.server
 
+import ru.spbau.shavkunov.server.data.AmountType
+import ru.spbau.shavkunov.server.data.Ingredient
 import ru.spbau.shavkunov.server.data.Recipe
 import java.io.File
 import java.sql.DriverManager
 import java.sql.Statement
+import java.util.*
+
 
 object DatabaseHelper {
     private val dbName = "food_assistant_database.db"
@@ -69,7 +73,7 @@ object DatabaseHelper {
 
     fun addRecipe(recipe: Recipe) {
         val connection = DriverManager.getConnection("jdbc:sqlite:" + dbName)
-        connection.autoCommit = false;
+        connection.autoCommit = false
         val stmt = connection.createStatement()
 
         val recipeID = insertRecipeName(recipe, stmt)
@@ -78,5 +82,58 @@ object DatabaseHelper {
         stmt.close()
         connection.commit()
         connection.close()
+    }
+
+    private fun getRecipeByID(recipeID: Int) : Recipe {
+        val connection = DriverManager.getConnection("jdbc:sqlite:" + dbName)
+        connection.autoCommit = false
+        val stmt = connection.createStatement()
+
+        val recipeQuery = "SELECT name, description FROM Recipe WHERE ID = " + recipeID
+        val mainData = stmt.executeQuery(recipeQuery)
+        var recipeName: String? = null
+        var recipeDescription: String? = null
+        if (mainData.next()) {
+            recipeName = mainData.getString("name")
+            recipeDescription = mainData.getString("description")
+        }
+
+        val ingredientsQuery = "SELECT name, amount, amount_type FROM Ingredient WHERE recipe_ID = " + recipeID
+        val ingredientsDB = stmt.executeQuery(ingredientsQuery)
+        val ingredients: MutableList<Ingredient> = LinkedList()
+        while (ingredientsDB.next()) {
+            val name = ingredientsDB.getString("name")
+            val amount = ingredientsDB.getString("amount").toDouble()
+            val amountType = AmountType.getEnum(ingredientsDB.getString("amount_type"))
+            val ingredient = Ingredient(name, amount, amountType)
+            ingredients.add(ingredient)
+        }
+
+        val recipe = Recipe(recipeName, ingredients, recipeDescription)
+
+        stmt.close()
+
+        return recipe
+    }
+
+    fun getRecipe(): Recipe? {
+        val connection = DriverManager.getConnection("jdbc:sqlite:" + dbName)
+        connection.autoCommit = false
+        val stmt = connection.createStatement()
+        val getQuery = "SELECT ID FROM Recipe ORDER BY RANDOM() LIMIT 1"
+        val rs = stmt.executeQuery(getQuery)
+
+        var recipeID = -1
+        if (rs.next()) {
+            recipeID = rs.getInt("ID")
+        }
+
+        stmt.close()
+
+        if (recipeID == -1) {
+            return null
+        }
+
+        return getRecipeByID(recipeID)
     }
 }

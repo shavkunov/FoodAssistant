@@ -15,4 +15,8 @@ public class InterfaceTextConstants {
     public static final String SUBMIT_BUTTON = "Submit";
     public static final String SUCCESSFUL_ADDED = "Your recipe were successful added";
     public static final String DELETE_BUTTON = "Del";
+    public static final String INGREDIENTS = "Ingredients";
+    public static final String DESCRIPTION = "Description";
+    public static final char MARK = 0x2022;
+    public static final String NO_RECIPES = "Ups, there is no recipes in database";
 }
