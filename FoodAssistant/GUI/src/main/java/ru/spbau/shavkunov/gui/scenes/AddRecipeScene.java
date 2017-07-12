@@ -37,9 +37,11 @@ public class AddRecipeScene extends SceneWrap {
 
     private static final int DESCRIPTION_MIN_SIZE = 200;
 
+    private static final int CHOICEBOX_MAX_SIZE = 85;
+
     private static final int LIST_VIEW_HEIGHT = 300;
 
-    private static final int GENERAL_WIDTH = 350;
+    private static final int GENERAL_WIDTH = 380;
     private @NotNull GridPane gridPane;
 
     private @Nullable TextField nameField;
@@ -103,13 +105,30 @@ public class AddRecipeScene extends SceneWrap {
         TextField ingredientAmount = new TextField();
         ingredientAmount.setMaxSize(AMOUNT_MAX_WIDTH, AMOUNT_MAX_HEIGHT);
         ChoiceBox kindOfAmount = new ChoiceBox();
+        kindOfAmount.setMaxWidth(CHOICEBOX_MAX_SIZE);
         kindOfAmount.setItems(FXCollections.observableArrayList(AmountType.values()));
 
         HBox hb = new HBox();
-        hb.getChildren().addAll(ingredientName, ingredientAmount, kindOfAmount);
+
+        Button deleteButton = initDeletePaneButton(hb);
+        hb.getChildren().addAll(ingredientName, ingredientAmount, kindOfAmount, deleteButton);
         hb.setSpacing(SPACE);
 
         return hb;
+    }
+
+    private Button initDeletePaneButton(@NotNull Pane pane) {
+        Button deleteButton = new Button(DELETE_BUTTON);
+        deleteButton.setOnAction(actionEvent ->  {
+            // not necessary
+            if (ingredientList != null) {
+                ObservableList<Pane> items = ingredientList.getItems();
+                items.remove(pane);
+                ingredientList.setItems(items);
+            }
+        });
+
+        return deleteButton;
     }
 
     private void initDescriptionField() {

@@ -14,4 +14,5 @@ public class InterfaceTextConstants {
     public static final String BACK_BUTTON = "Back";
     public static final String SUBMIT_BUTTON = "Submit";
     public static final String SUCCESSFUL_ADDED = "Your recipe were successful added";
+    public static final String DELETE_BUTTON = "Del";
 }
