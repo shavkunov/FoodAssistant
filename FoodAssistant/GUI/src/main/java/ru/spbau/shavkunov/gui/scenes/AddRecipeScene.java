@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -14,7 +13,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.spbau.shavkunov.gui.UserInterface;
 import ru.spbau.shavkunov.server.DatabaseHelper;
 import ru.spbau.shavkunov.server.data.AmountType;
 import ru.spbau.shavkunov.server.data.Ingredient;
@@ -27,7 +25,7 @@ import java.util.List;
 
 import static ru.spbau.shavkunov.gui.InterfaceTextConstants.*;
 
-public class AddRecipeScene extends SceneWrap {
+public class AddRecipeScene extends SceneWithBackButton {
     private static final int SCENE_HEIGHT = 700;
     private static final int SCENE_WIDTH = 700;
 
@@ -49,7 +47,8 @@ public class AddRecipeScene extends SceneWrap {
     private @Nullable TextArea descriptionField;
     private @Nullable Label infoLabel;
 
-    public AddRecipeScene(@NotNull Stage stage) {
+    public AddRecipeScene(@NotNull Stage stage, @NotNull SceneWrap backScene) {
+        this.backScene = backScene;
         this.stage = stage;
         gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
@@ -58,12 +57,8 @@ public class AddRecipeScene extends SceneWrap {
         initNameRecipeField();
         initIngredientsField();
         initDescriptionField();
-        Button backButton = initBackButton(this.stage);
 
-        VBox vBox = new VBox();
-        vBox.getChildren().addAll(backButton, gridPane);
-
-        this.scene = new Scene(vBox);
+        this.parent = gridPane;
     }
 
     private void initNameRecipeField() {
@@ -150,14 +145,7 @@ public class AddRecipeScene extends SceneWrap {
         gridPane.addRow(3, vBox);
     }
 
-    public static  @NotNull Button initBackButton(@NotNull Stage stage) {
-        Button backButton = new Button(BACK_BUTTON);
-        backButton.setOnAction(actionEvent ->
-                UserInterface.showScene(new MainScene(stage)));
 
-        backButton.setAlignment(Pos.TOP_LEFT);
-        return backButton;
-    }
 
     private @NotNull Button initSubmitButton() {
         Button submitButton = new Button(SUBMIT_BUTTON);

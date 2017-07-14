@@ -6,18 +6,26 @@ import org.jetbrains.annotations.NotNull;
 import ru.spbau.shavkunov.gui.scenes.MainScene;
 import ru.spbau.shavkunov.gui.scenes.SceneWrap;
 import ru.spbau.shavkunov.server.DatabaseHelper;
+import ru.spbau.shavkunov.server.data.Recipe;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Main menu.
  */
 public class UserInterface extends Application {
+    // TODO: List of strings. Because recipe might be too big.
+    private static @NotNull List<Recipe> purchases;
+
     @Override
     public void start(@NotNull Stage stage) throws Exception {
         // init scene with group objects
         stage.setTitle("Food Assistant");
         stage.setResizable(false);
+
+        purchases = new LinkedList<>();
 
         MainScene mainScene = new MainScene(stage);
         initDatabase();
@@ -26,7 +34,7 @@ public class UserInterface extends Application {
     }
 
     private void initDatabase() {
-        if (!DatabaseHelper.INSTANCE.isDatabaseexists()) {
+        if (!DatabaseHelper.INSTANCE.isDatabaseExists()) {
             DatabaseHelper.INSTANCE.createDatabase();
         }
     }
@@ -38,6 +46,10 @@ public class UserInterface extends Application {
 
         stage.setScene(wrap.getScene());
         stage.show();
+    }
+
+    public static List<Recipe> getPurchases() {
+        return purchases;
     }
 
     /**

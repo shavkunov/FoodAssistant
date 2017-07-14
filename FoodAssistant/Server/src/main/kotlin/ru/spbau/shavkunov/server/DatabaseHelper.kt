@@ -46,7 +46,7 @@ object DatabaseHelper {
         connection.close()
     }
 
-    fun isDatabaseexists(): Boolean {
+    fun isDatabaseExists(): Boolean {
         val dbFile = File(dbName)
         return dbFile.exists()
     }
@@ -111,12 +111,14 @@ object DatabaseHelper {
 
         val recipe = Recipe(recipeName, ingredients, recipeDescription)
 
+
         stmt.close()
+        connection.close()
 
         return recipe
     }
 
-    fun getRecipe(): Recipe? {
+    fun getRandomRecipe(): Recipe? {
         val connection = DriverManager.getConnection("jdbc:sqlite:" + dbName)
         connection.autoCommit = false
         val stmt = connection.createStatement()
@@ -129,11 +131,50 @@ object DatabaseHelper {
         }
 
         stmt.close()
+        connection.close()
 
         if (recipeID == -1) {
             return null
         }
 
         return getRecipeByID(recipeID)
+    }
+
+    fun getRecipeByName(recipeName: String): Recipe? {
+        val connection = DriverManager.getConnection("jdbc:sqlite:" + dbName)
+        val stmt = connection.createStatement()
+        val getQuery = "SELECT ID FROM Recipe WHERE name = '" + recipeName + "'"
+        val rs = stmt.executeQuery(getQuery)
+
+        var recipeID = -1
+        if (rs.next()) {
+            recipeID = rs.getInt("ID")
+        }
+
+        stmt.close()
+        connection.close()
+
+        if (recipeID == -1) {
+            return null
+        }
+
+        return getRecipeByID(recipeID)
+    }
+
+    fun getAllRecipeNames(): List<String> {
+        val connection = DriverManager.getConnection("jdbc:sqlite:" + dbName)
+        val stmt = connection.createStatement()
+        val getQuery = "SELECT name FROM Recipe"
+        val rs = stmt.executeQuery(getQuery)
+
+        var recipeNames: MutableList<String> = LinkedList()
+        while (rs.next()) {
+            recipeNames.add(rs.getString("name"))
+        }
+
+        stmt.close()
+        connection.close()
+
+        return recipeNames
     }
 }

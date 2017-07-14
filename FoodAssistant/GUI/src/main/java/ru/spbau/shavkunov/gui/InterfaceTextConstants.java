@@ -17,6 +17,10 @@ public class InterfaceTextConstants {
     public static final String DELETE_BUTTON = "Del";
     public static final String INGREDIENTS = "Ingredients";
     public static final String DESCRIPTION = "Description";
-    public static final char MARK = 0x2022;
     public static final String NO_RECIPES = "Ups, there is no recipes in database";
+    public static final String COPY_TO_CLIPBOARD = "Copy to clipboard";
+    public static final String CREATE_TEXT_NOTE = "Create note at Notes";
+    public static final String ADD_TO_LIST = "Add to purchases list";
+    public static final String PURCHASES_LIST = "Purchases list";
+    public static final String ALL_RECIPES = "All recipes";
 }
