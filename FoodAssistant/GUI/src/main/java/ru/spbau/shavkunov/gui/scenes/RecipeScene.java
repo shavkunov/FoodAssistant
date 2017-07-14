@@ -108,7 +108,7 @@ public class RecipeScene extends SceneWithBackButton {
         Button createAddToListButton = new Button(ADD_TO_LIST);
 
         createAddToListButton.setOnAction(actionEvent ->  {
-            UserInterface.getPurchases().add(recipe);
+            PurchasesListScene.getPurchases().add(recipe);
         });
 
         return createAddToListButton;

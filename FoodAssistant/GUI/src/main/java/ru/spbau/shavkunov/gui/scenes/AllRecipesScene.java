@@ -43,13 +43,20 @@ public class AllRecipesScene extends SceneWithBackButton {
 
         recipes.setOnMouseClicked(click -> {
             if (click.getClickCount() == 2) {
-                Label currentRecipe = (Label) recipes.getSelectionModel().getSelectedItem().getChildren().get(0);
-                Recipe recipe = DatabaseHelper.INSTANCE.getRecipeByName(currentRecipe.getText());
                 SceneWithBackButton newBackScene = new AllRecipesScene(stage, backScene);
-                SceneWithBackButton recipeScene = new RecipeScene(stage, recipe, newBackScene);
-                UserInterface.showScene(recipeScene);
+                selectItemDoubleClick(recipes, newBackScene);
             }
         });
+    }
+
+    // need first -- label
+    // do I had to specify stage?
+    public static void selectItemDoubleClick(@NotNull ListView<Pane> recipes,
+                                             @NotNull SceneWithBackButton backScene) {
+        Label currentRecipe = (Label) recipes.getSelectionModel().getSelectedItem().getChildren().get(0);
+        Recipe recipe = DatabaseHelper.INSTANCE.getRecipeByName(currentRecipe.getText());
+        SceneWithBackButton recipeScene = new RecipeScene(backScene.getStage(), recipe, backScene);
+        UserInterface.showScene(recipeScene);
     }
 
     private @NotNull Pane getCustomCell(String recipeName) {
@@ -62,6 +69,10 @@ public class AllRecipesScene extends SceneWithBackButton {
         hBox.getChildren().addAll(recipeLabel, addToListButton);
 
         return hBox;
+    }
+
+    public static int getLabelWidth() {
+        return LABEL_WIDTH;
     }
 
     @Override

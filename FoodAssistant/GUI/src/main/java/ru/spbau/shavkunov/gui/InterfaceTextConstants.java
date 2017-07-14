@@ -23,4 +23,6 @@ public class InterfaceTextConstants {
     public static final String ADD_TO_LIST = "Add to purchases list";
     public static final String PURCHASES_LIST = "Purchases list";
     public static final String ALL_RECIPES = "All recipes";
+    public static final String PURCHASES_HEADER = "Your recipes";
+    public static final String DELETE_FROM_PURCHASES = "Delete";
 }

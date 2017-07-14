@@ -80,7 +80,8 @@ public class MainScene extends SceneWrap {
         purchasesButton.setMaxWidth(BUTTON_WIDTH);
 
         purchasesButton.setOnAction(actionEvent -> {
-            // TODO scene
+            SceneWithBackButton purchasesScene = new PurchasesListScene(stage, new MainScene(this.stage));
+            UserInterface.showScene(purchasesScene);
         });
 
         return purchasesButton;
